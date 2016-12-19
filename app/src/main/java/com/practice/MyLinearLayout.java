@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -21,10 +22,18 @@ public class MyLinearLayout extends LinearLayout {
     View searchBar;
     View scrollViewContainer;
     ImageButton qrcodeBtn;
+    ImageButton personBtn;
+    ImageButton checkDownloadBtn;
+    ImageView topIv;
     ScrollView scrollView;
-    int driftHeight = 0;
+    int driftHeight = -1;
     float lastY = 0;
     boolean shouldInterceptActionMove = false;
+    int searchBarMeasuredWidth = -1;
+    int searchBarTopMargin=-1;
+    int searchBarBottomMargin=-1;
+
+
     String[] ACTION_NAME = {"ACTION_DOWN", "ACTION_UP", "ACTION_MOVE", "ACTION_CANCEL"};
 
     public MyLinearLayout(Context context) {
@@ -45,14 +54,17 @@ public class MyLinearLayout extends LinearLayout {
         topView = findViewById(R.id.topView);
         searchBar = findViewById(R.id.searchBar);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
-        scrollViewContainer=findViewById(R.id.scrollViewContainer);
-        qrcodeBtn= (ImageButton) findViewById(R.id.qrcodeBtn);
+        scrollViewContainer = findViewById(R.id.scrollViewContainer);
+        topIv = (ImageView) findViewById(R.id.topIv);
+        personBtn = (ImageButton) findViewById(R.id.personBtn);
+        checkDownloadBtn = (ImageButton) findViewById(R.id.checkDownloadBtn);
+        qrcodeBtn = (ImageButton) findViewById(R.id.qrcodeBtn);
         qrcodeBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                FrameLayout.LayoutParams searchBarLayoutParams= (FrameLayout.LayoutParams) searchBar.getLayoutParams();
-                LinearLayout.LayoutParams scrollViewContainerLayoutParams= (LayoutParams) scrollViewContainer.getLayoutParams();
-                scrollViewContainerLayoutParams.height=getMeasuredHeight() - searchBar.getMeasuredHeight()-searchBarLayoutParams.topMargin-searchBarLayoutParams.bottomMargin;
+                FrameLayout.LayoutParams searchBarLayoutParams = (FrameLayout.LayoutParams) searchBar.getLayoutParams();
+                LinearLayout.LayoutParams scrollViewContainerLayoutParams = (LayoutParams) scrollViewContainer.getLayoutParams();
+                scrollViewContainerLayoutParams.height = getMeasuredHeight() - searchBar.getMeasuredHeight() - searchBarLayoutParams.topMargin - searchBarLayoutParams.bottomMargin;
                 scrollViewContainer.requestLayout();
             }
         });
@@ -77,7 +89,7 @@ public class MyLinearLayout extends LinearLayout {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                shouldInterceptActionMove =false;
+                shouldInterceptActionMove = false;
                 break;
             default:
                 break;
@@ -88,7 +100,7 @@ public class MyLinearLayout extends LinearLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.e(TAG, "onInterceptTouchEvent: " + ev.getAction());
-        switch (ev.getAction()){
+        switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastY = ev.getY();
                 return false;
@@ -103,11 +115,18 @@ public class MyLinearLayout extends LinearLayout {
 
     @Override
     public void scrollTo(int x, int y) {
-        y=y<0?0:y;
-        y=y> driftHeight ? driftHeight :y;
-        float scrollFactor=(float)y/ driftHeight;
-        //topView.setAlpha(1-scrollFactor);
-       // topView.setTranslationX(-scrollFactor*topView.getMeasuredWidth());
+        y = y < 0 ? 0 : y;
+        y = y > driftHeight ? driftHeight : y;
+        float scrollFactor = (float) y / driftHeight;
+        personBtn.setTranslationY(y);
+        checkDownloadBtn.setTranslationY(y);
+        topIv.setAlpha(1 - scrollFactor);
+        Log.e(TAG, "scrollTo: a= " + personBtn.getMeasuredWidth() + " b= " + checkDownloadBtn.getMeasuredWidth() + " c= " + scrollFactor);
+        Log.e(TAG, "scrollTo: width=" + (searchBarMeasuredWidth - (int) ((personBtn.getMeasuredWidth() + ((FrameLayout.LayoutParams) personBtn.getLayoutParams()).rightMargin + checkDownloadBtn.getMeasuredWidth() + ((FrameLayout.LayoutParams) checkDownloadBtn.getLayoutParams()).leftMargin) * scrollFactor)));
+        searchBar.getLayoutParams().width = searchBarMeasuredWidth - (int) ((personBtn.getMeasuredWidth() + ((FrameLayout.LayoutParams) personBtn.getLayoutParams()).rightMargin + checkDownloadBtn.getMeasuredWidth() + ((FrameLayout.LayoutParams) checkDownloadBtn.getLayoutParams()).leftMargin) * scrollFactor);
+        ((FrameLayout.LayoutParams)searchBar.getLayoutParams()).topMargin=searchBarTopMargin-(int)(searchBarTopMargin/2*scrollFactor);
+        ((FrameLayout.LayoutParams)searchBar.getLayoutParams()).bottomMargin=searchBarBottomMargin-(int)(searchBarBottomMargin/2*scrollFactor);
+        searchBar.requestLayout();
         super.scrollTo(x, y);
     }
 
@@ -126,7 +145,7 @@ public class MyLinearLayout extends LinearLayout {
                 lastY = event.getY();
                 if (dy < 0) {
                     if (getScrollY() < driftHeight) {
-                           scrollBy(0, (int) -dy);
+                        scrollBy(0, (int) -dy);
                     } else {
                         event.setAction(MotionEvent.ACTION_UP);
                         dispatchTouchEvent(event);
@@ -161,16 +180,27 @@ public class MyLinearLayout extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         Log.e(TAG, "onMeasure: ===START===");
-        Log.e(TAG, "onMeasure: scrollViewContainer 1st measure:"+scrollViewContainer.getMeasuredHeight() );
-        FrameLayout.LayoutParams searchBarLayoutParams= (FrameLayout.LayoutParams) searchBar.getLayoutParams();
-        driftHeight = topView.getMeasuredHeight()-searchBar.getMeasuredHeight()-searchBarLayoutParams.topMargin-searchBarLayoutParams.bottomMargin;
-        Log.e(TAG, "onMeasure: searchBar measured height"+searchBar.getMeasuredHeight() );
-        LinearLayout.LayoutParams scrollViewContainerLayoutParams= (LayoutParams) scrollViewContainer.getLayoutParams();
-        Log.e(TAG, "onMeasure: a="+getMeasuredHeight()+"b="+searchBar.getMeasuredHeight()+"c="+searchBarLayoutParams.topMargin+"d="+searchBarLayoutParams.bottomMargin);
-        scrollViewContainerLayoutParams.height=getMeasuredHeight() - searchBar.getMeasuredHeight()-searchBarLayoutParams.topMargin-searchBarLayoutParams.bottomMargin;
-        Log.e(TAG, "onMeasure: scrollViewContainer layoutparams height"+scrollViewContainerLayoutParams.height );
+        if (searchBarMeasuredWidth == -1) {
+            searchBarMeasuredWidth = searchBar.getMeasuredWidth();
+        }
+        Log.e(TAG, "onMeasure: scrollViewContainer 1st measure:" + scrollViewContainer.getMeasuredHeight());
+        FrameLayout.LayoutParams searchBarLayoutParams = (FrameLayout.LayoutParams) searchBar.getLayoutParams();
+        if (driftHeight < 0) {
+            driftHeight = topView.getMeasuredHeight() - searchBar.getMeasuredHeight() - searchBarLayoutParams.topMargin / 2 - searchBarLayoutParams.bottomMargin / 2;
+        }
+        if(searchBarTopMargin<0){
+            searchBarTopMargin=((FrameLayout.LayoutParams)searchBar.getLayoutParams()).topMargin;
+        }
+        if(searchBarBottomMargin<0){
+            searchBarBottomMargin=((FrameLayout.LayoutParams)searchBar.getLayoutParams()).bottomMargin;
+        }
+        Log.e(TAG, "onMeasure: searchBar measured height" + searchBar.getMeasuredHeight());
+        LinearLayout.LayoutParams scrollViewContainerLayoutParams = (LayoutParams) scrollViewContainer.getLayoutParams();
+        Log.e(TAG, "onMeasure: a=" + getMeasuredHeight() + "b=" + searchBar.getMeasuredHeight() + "c=" + searchBarLayoutParams.topMargin + "d=" + searchBarLayoutParams.bottomMargin);
+        scrollViewContainerLayoutParams.height = getMeasuredHeight() - searchBar.getMeasuredHeight() - searchBarLayoutParams.topMargin - searchBarLayoutParams.bottomMargin;
+        Log.e(TAG, "onMeasure: scrollViewContainer layoutparams height" + scrollViewContainerLayoutParams.height);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.e(TAG, "onMeasure: scrollViewContainer 2nd measure:"+scrollViewContainer.getMeasuredHeight() );
+        Log.e(TAG, "onMeasure: scrollViewContainer 2nd measure:" + scrollViewContainer.getMeasuredHeight());
         Log.e(TAG, "onMeasure: ===END===");
     }
 
