@@ -3,14 +3,10 @@ package com.practice;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-
-import static android.content.ContentValues.TAG;
 
 
 /**
@@ -18,14 +14,15 @@ import static android.content.ContentValues.TAG;
  */
 
 public class MyLinearLayout extends LinearLayout {
+    private static final String TAG = MyLinearLayout.class.getSimpleName();
     View topView;
     View navView;
     ScrollView scrollView;
     int topViewHeight = 0;
     float lastY = 0;
-    String[] ACTION_NAME={"ACTION_DOWN","ACTION_UP","ACTION_MOVE","ACTION_CANCEL"};
-    GestureDetector gestureDetector;
-    boolean shouldIntercepted=false;
+    boolean shouldInterceptActionMove = false;
+    String[] ACTION_NAME = {"ACTION_DOWN", "ACTION_UP", "ACTION_MOVE", "ACTION_CANCEL"};
+
     public MyLinearLayout(Context context) {
         super(context);
     }
@@ -41,18 +38,6 @@ public class MyLinearLayout extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        gestureDetector=new GestureDetector(getContext(),new GestureDetector.SimpleOnGestureListener(){
-            @Override
-            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                return super.onScroll(e1, e2, distanceX, distanceY);
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                return super.onFling(e1, e2, velocityX, velocityY);
-            }
-
-        });
         topView = findViewById(R.id.topView);
         navView = findViewById(R.id.navView);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
@@ -60,71 +45,88 @@ public class MyLinearLayout extends LinearLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        Log.e(TAG, "dispatchTouchEvent: " +ACTION_NAME[ev.getAction()]);
+        Log.e(TAG, "dispatchTouchEvent: " + ev.getAction());
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float dy = ev.getY() - lastY;
+                if (shouldInterceptActionMove == false) {
+                    if (dy < 0 && getScrollY() < topViewHeight) {
+                        shouldInterceptActionMove = true;
+                    }
+                    if (dy > 0 && scrollView.getScrollY() == 0) {
+                        shouldInterceptActionMove = true;
+                        ev.setAction(MotionEvent.ACTION_DOWN);
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                shouldInterceptActionMove =false;
+                break;
+            default:
+                break;
+        }
         return super.dispatchTouchEvent(ev);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.e(TAG, "onInterceptTouchEvent: "+ACTION_NAME[ev.getAction()] );
-        switch (ev.getAction()) {
+        Log.e(TAG, "onInterceptTouchEvent: " + ev.getAction());
+        switch (ev.getAction()){
             case MotionEvent.ACTION_DOWN:
                 lastY = ev.getY();
-                break;
+                return false;
             case MotionEvent.ACTION_MOVE:
-                Log.e(TAG, "onInterceptTouchEvent: ACTION_MOVE" );
-                float dy = ev.getY() - lastY;
-                if (dy < 0 && getScrollY() < topViewHeight) {
-                    return true;
-                }
-                if (dy > 0 && scrollView.getScrollY() == 0) {
-                    return true;
-                }
-
-                break;
+                return shouldInterceptActionMove;
             case MotionEvent.ACTION_UP:
-
-                break;
+                return false;
             default:
-                break;
+                return false;
         }
-        return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public void scrollTo(int x, int y) {
+        y=y<0?0:y;
+        y=y>topViewHeight?topViewHeight:y;
+        float scrollFactor=(float)y/topViewHeight;
+        topView.setAlpha(1-scrollFactor);
+        topView.setTranslationX(-scrollFactor*topView.getMeasuredWidth());
+        super.scrollTo(x, y);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.e(TAG, "onTouchEvent: "+ACTION_NAME[event.getAction()] );
+        Log.e(TAG, "onTouchEvent: " + event.getAction());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
 
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.e(TAG, "onTouchEvent: ACTION_MOVE" );
+                Log.e(TAG, "onTouchEvent: ACTION_MOVE");
+
+
                 float dy = event.getY() - lastY;
                 lastY = event.getY();
                 if (dy < 0) {
-
                     if (getScrollY() < topViewHeight) {
-                        int scrollDistance=(int)-dy;
-                        scrollDistance=scrollDistance>(topViewHeight-getScrollY())?(topViewHeight-getScrollY()):scrollDistance;
-                        scrollBy( 0, scrollDistance);
+                           scrollBy(0, (int) -dy);
                     } else {
-                        event.setAction(MotionEvent.ACTION_CANCEL);
+                        event.setAction(MotionEvent.ACTION_UP);
                         dispatchTouchEvent(event);
-                        MotionEvent motionEvent=MotionEvent.obtain(event);
+                        MotionEvent motionEvent = MotionEvent.obtain(event);
                         motionEvent.setAction(MotionEvent.ACTION_DOWN);
                         dispatchTouchEvent(motionEvent);
                     }
 
                 } else if (dy > 0) {
-                    if(getScrollY()>0){
-                        int scrollDistance=(int)dy;
-                        scrollDistance=getScrollY()-scrollDistance>=0?scrollDistance:getScrollY();
-                        scrollBy(0,-scrollDistance);
-                    }else{
-                        event.setAction(MotionEvent.ACTION_CANCEL);
+                    if (getScrollY() > 0) {
+                        scrollBy(0, (int) -dy);
+                    } else {
+                        event.setAction(MotionEvent.ACTION_UP);
                         dispatchTouchEvent(event);
-                        MotionEvent motionEvent=MotionEvent.obtain(event);
+                        MotionEvent motionEvent = MotionEvent.obtain(event);
                         motionEvent.setAction(MotionEvent.ACTION_DOWN);
                         dispatchTouchEvent(motionEvent);
                     }
