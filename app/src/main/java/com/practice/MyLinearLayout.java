@@ -5,6 +5,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -16,9 +18,11 @@ import android.widget.ScrollView;
 public class MyLinearLayout extends LinearLayout {
     private static final String TAG = MyLinearLayout.class.getSimpleName();
     View topView;
-    View navView;
+    View searchBar;
+    View scrollViewContainer;
+    ImageButton qrcodeBtn;
     ScrollView scrollView;
-    int topViewHeight = 0;
+    int driftHeight = 0;
     float lastY = 0;
     boolean shouldInterceptActionMove = false;
     String[] ACTION_NAME = {"ACTION_DOWN", "ACTION_UP", "ACTION_MOVE", "ACTION_CANCEL"};
@@ -39,8 +43,19 @@ public class MyLinearLayout extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         topView = findViewById(R.id.topView);
-        navView = findViewById(R.id.navView);
+        searchBar = findViewById(R.id.searchBar);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
+        scrollViewContainer=findViewById(R.id.scrollViewContainer);
+        qrcodeBtn= (ImageButton) findViewById(R.id.qrcodeBtn);
+        qrcodeBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FrameLayout.LayoutParams searchBarLayoutParams= (FrameLayout.LayoutParams) searchBar.getLayoutParams();
+                LinearLayout.LayoutParams scrollViewContainerLayoutParams= (LayoutParams) scrollViewContainer.getLayoutParams();
+                scrollViewContainerLayoutParams.height=getMeasuredHeight() - searchBar.getMeasuredHeight()-searchBarLayoutParams.topMargin-searchBarLayoutParams.bottomMargin;
+                scrollViewContainer.requestLayout();
+            }
+        });
     }
 
     @Override
@@ -52,7 +67,7 @@ public class MyLinearLayout extends LinearLayout {
             case MotionEvent.ACTION_MOVE:
                 float dy = ev.getY() - lastY;
                 if (shouldInterceptActionMove == false) {
-                    if (dy < 0 && getScrollY() < topViewHeight) {
+                    if (dy < 0 && getScrollY() < driftHeight) {
                         shouldInterceptActionMove = true;
                     }
                     if (dy > 0 && scrollView.getScrollY() == 0) {
@@ -89,10 +104,10 @@ public class MyLinearLayout extends LinearLayout {
     @Override
     public void scrollTo(int x, int y) {
         y=y<0?0:y;
-        y=y>topViewHeight?topViewHeight:y;
-        float scrollFactor=(float)y/topViewHeight;
-        topView.setAlpha(1-scrollFactor);
-        topView.setTranslationX(-scrollFactor*topView.getMeasuredWidth());
+        y=y> driftHeight ? driftHeight :y;
+        float scrollFactor=(float)y/ driftHeight;
+        //topView.setAlpha(1-scrollFactor);
+       // topView.setTranslationX(-scrollFactor*topView.getMeasuredWidth());
         super.scrollTo(x, y);
     }
 
@@ -110,7 +125,7 @@ public class MyLinearLayout extends LinearLayout {
                 float dy = event.getY() - lastY;
                 lastY = event.getY();
                 if (dy < 0) {
-                    if (getScrollY() < topViewHeight) {
+                    if (getScrollY() < driftHeight) {
                            scrollBy(0, (int) -dy);
                     } else {
                         event.setAction(MotionEvent.ACTION_UP);
@@ -145,14 +160,25 @@ public class MyLinearLayout extends LinearLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        topViewHeight = topView.getMeasuredHeight();
-        scrollView.getLayoutParams().height = getMeasuredHeight() - navView.getMeasuredHeight();
+        Log.e(TAG, "onMeasure: ===START===");
+        Log.e(TAG, "onMeasure: scrollViewContainer 1st measure:"+scrollViewContainer.getMeasuredHeight() );
+        FrameLayout.LayoutParams searchBarLayoutParams= (FrameLayout.LayoutParams) searchBar.getLayoutParams();
+        driftHeight = topView.getMeasuredHeight()-searchBar.getMeasuredHeight()-searchBarLayoutParams.topMargin-searchBarLayoutParams.bottomMargin;
+        Log.e(TAG, "onMeasure: searchBar measured height"+searchBar.getMeasuredHeight() );
+        LinearLayout.LayoutParams scrollViewContainerLayoutParams= (LayoutParams) scrollViewContainer.getLayoutParams();
+        Log.e(TAG, "onMeasure: a="+getMeasuredHeight()+"b="+searchBar.getMeasuredHeight()+"c="+searchBarLayoutParams.topMargin+"d="+searchBarLayoutParams.bottomMargin);
+        scrollViewContainerLayoutParams.height=getMeasuredHeight() - searchBar.getMeasuredHeight()-searchBarLayoutParams.topMargin-searchBarLayoutParams.bottomMargin;
+        Log.e(TAG, "onMeasure: scrollViewContainer layoutparams height"+scrollViewContainerLayoutParams.height );
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.e(TAG, "onMeasure: scrollViewContainer 2nd measure:"+scrollViewContainer.getMeasuredHeight() );
+        Log.e(TAG, "onMeasure: ===END===");
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         Log.e(TAG, "onLayout: ");
         super.onLayout(changed, l, t, r, b);
+
     }
 
 
