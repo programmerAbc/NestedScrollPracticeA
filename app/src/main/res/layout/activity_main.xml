@@ -119,7 +119,7 @@
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/holo_green_light">
+            android:background="@android:color/holo_orange_light">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -127,101 +127,74 @@
                 android:orientation="vertical">
 
                 <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="START" />
 
                 <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BUTTON" />
+                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="BUTTON" />
 
                 <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="BUTTON" />
-
-                <Button
+                    android:background="@android:drawable/dialog_holo_light_frame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="END" />
