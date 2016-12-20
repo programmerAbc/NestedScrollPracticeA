@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-
 <com.practice.MyLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -14,8 +13,8 @@
         android:id="@+id/topView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:focusable="true"
         android:background="@android:color/holo_blue_dark"
+        android:focusable="true"
         android:focusableInTouchMode="true">
 
         <ImageView
@@ -24,6 +23,49 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:src="@drawable/titleimg" />
+
+        <RelativeLayout
+            android:id="@+id/buttonBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top">
+
+            <ImageButton
+                android:id="@+id/personBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_person" />
+
+            <ImageButton
+                android:id="@+id/checkDownloadBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_download"
+                android:tint="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/checkWifiBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/checkDownloadBtn"
+                android:background="@android:color/transparent"
+
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_wifi" />
+
+
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/searchBar"
@@ -45,45 +87,25 @@
                 android:tint="@android:color/darker_gray" />
 
             <EditText
-                android:background="@android:color/transparent"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
                 android:gravity="center_vertical|left"
                 android:text="hello"
                 android:textColor="@android:color/darker_gray" />
 
             <ImageButton
                 android:id="@+id/qrcodeBtn"
-                android:background="@android:color/transparent"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:background="@android:color/transparent"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_qrcode" />
         </LinearLayout>
-        <ImageButton
-            android:id="@+id/personBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_person"
-            android:scaleType="fitXY"
-            android:background="@android:color/transparent"
-            android:layout_margin="10dp"
-            android:layout_gravity="top|left"
-            />
-        <ImageButton
-            android:id="@+id/checkDownloadBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_download"
-            android:scaleType="fitXY"
-            android:tint="@android:color/white"
-            android:background="@android:color/transparent"
-            android:layout_margin="10dp"
-            android:layout_gravity="top|right"
-            />
+
 
     </FrameLayout>
 
